@@ -4,7 +4,7 @@ extends Camera2D
 @onready var player: CharacterBody2D = get_tree().get_nodes_in_group("player")[0]
 @onready var tile_map_layer: TileMapLayer = get_tree().get_nodes_in_group("room")[0]
 
-var debug_draw_enabled: bool = true
+var debug_draw_enabled: bool = false
 @export var desired_rect_color: Color = Color(1, 0, 0, 0.5)
 @export var level_rect_color: Color = Color(0, 1, 0, 0.5)
 

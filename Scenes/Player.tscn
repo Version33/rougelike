@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://61lcgaipm83r"]
+[gd_scene load_steps=8 format=3 uid="uid://61lcgaipm83r"]
 
 [ext_resource type="Script" path="res://Scripts/player_control.gd" id="1_w44a8"]
 [ext_resource type="Texture2D" uid="uid://b17kia5dj4rya" path="res://Placeholder Sprites/Square/Square-0006.png" id="2_w72ec"]
@@ -9,23 +9,49 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nptje"]
 size = Vector2(42, 42)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_paywa"]
+size = Vector2(42, 42)
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_w44a8")
+move_speed = null
 roll_speed = 1000.0
+roll_duration = null
+roll_cooldown = null
 starting_weapon = ExtResource("2_yqq7c")
 alternate_weapon = ExtResource("3_qbwkp")
+max_weapons = null
 weapon_pivot_path = NodePath("WeaponPivot")
 player_sprite_path = NodePath("PlayerSprite")
 health_component_path = NodePath("HealthComponent")
+interact_box_path = NodePath("InteractBox")
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+offset_left = -33.0
+offset_top = -50.0
+offset_right = 38.0
+offset_bottom = -27.0
+text = "Pickup: E"
+
+[node name="PlayerHitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nptje")
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 modulate = Color(0, 0.428437, 0.223188, 1)
 scale = Vector2(1.312, 1.312)
 texture = ExtResource("2_w72ec")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_nptje")
-
 [node name="WeaponPivot" type="Node2D" parent="."]
 
 [node name="HealthComponent" parent="." instance=ExtResource("4_nchq8")]
+
+[node name="InteractBox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractBox"]
+shape = SubResource("RectangleShape2D_paywa")
+
+[connection signal="area_entered" from="InteractBox" to="." method="_on_interact_box_entered"]
+[connection signal="area_exited" from="InteractBox" to="." method="_on_interact_box_exited"]

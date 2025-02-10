@@ -10,18 +10,33 @@ class_name Weapon extends Node2D
 @export var bullet_damage: int = 5
 @export var fire_rate: float = 0.3 # Cooldown between shots in seconds
 @export var automatic: bool = false # not implemented
+@export var magazine_size: float = 10
+@export var reload_time: float = 2
 
 @onready var muzzle_position: Marker2D = $MuzzlePosition
+@onready var hitbox: Area2D = $Area2D
 
 @export_category("Bullet Info")
 @export var bullet_scene: PackedScene
 
 var can_shoot: bool = true # Cooldown flag
+var current_ammo: float = magazine_size
+var is_equipped: bool = false
+var is_held: bool = false
+@onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
 	## Called when the weapon scene is ready.
 	if not muzzle_position:
 		printerr("Error: MuzzlePosition node not found in weapon scene: ", weapon_name)
+
+func set_is_equipped(state: bool) -> void:
+	is_equipped = state
+	sprite.visible = is_equipped || !is_held
+
+func set_is_held(state: bool) -> void:
+	is_held = state
+	hitbox.monitorable = !is_held
 
 func shoot(direction: Vector2, parent_node: Node2D) -> void:
 	## Base shoot function - can be overridden by child weapon scripts for custom behavior.

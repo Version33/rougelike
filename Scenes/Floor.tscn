@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=4 uid="uid://c8c7bpo011pp1"]
+[gd_scene load_steps=8 format=4 uid="uid://c8c7bpo011pp1"]
 
 [ext_resource type="Texture2D" uid="uid://cya2g8h1qcn7a" path="res://Assets/Spritesheet.png" id="1_mwojv"]
 [ext_resource type="Script" path="res://Scripts/camera_controller.gd" id="2_mi76j"]
 [ext_resource type="PackedScene" uid="uid://61lcgaipm83r" path="res://Scenes/player.tscn" id="3_2sx67"]
+[ext_resource type="PackedScene" uid="uid://bwuhy0tag1d4k" path="res://Scenes/Weapons/pistol.tscn" id="4_kbh8e"]
+[ext_resource type="PackedScene" uid="uid://47x3di1i0rfp" path="res://Scenes/Weapons/shotgun.tscn" id="5_ewqop"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hxfrn"]
 texture = ExtResource("1_mwojv")
@@ -1088,6 +1090,32 @@ tile_set = SubResource("TileSet_2d1mg")
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("2_mi76j")
 
+[node name="TempUI" type="Label" parent="Camera2D"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = 202.0
+offset_right = -397.0
+offset_bottom = 329.0
+grow_vertical = 0
+size_flags_horizontal = 0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Move - WASD
+Pickup - E
+Cycle - Q
+Drop - Z
+Aim and Shoot - Mouse"
+
 [node name="Player" parent="." instance=ExtResource("3_2sx67")]
 position = Vector2(-402, 213)
 move_speed = 500.0
+interact_box_path = null
+
+[node name="Pistol" parent="." instance=ExtResource("4_kbh8e")]
+position = Vector2(-213, 85)
+rotation = 1.5708
+
+[node name="Shotgun" parent="." instance=ExtResource("5_ewqop")]
+position = Vector2(-147, 268)
+rotation = 1.5708

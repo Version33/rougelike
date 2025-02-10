@@ -1,7 +1,13 @@
 [gd_scene format=3 uid="uid://2m7mcmch5m1"]
 
-[node name="BaseWeapon" type="Node2D"]
+[node name="BaseWeapon" type="Node2D" groups=["weapon"]]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.5708
+
+[node name="Area2D" type="Area2D" parent="." groups=["weapon"]]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
 
 [node name="MuzzlePosition" type="Marker2D" parent="."]

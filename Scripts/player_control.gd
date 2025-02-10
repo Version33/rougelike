@@ -7,45 +7,40 @@ extends CharacterBody2D
 @export_subgroup("Roll")
 @export var roll_speed: float = 600.0
 @export var roll_duration: float = 0.2
-@export var roll_cooldown: float = 0.5 # Add a cooldown!
+@export var roll_cooldown: float = 0.5
 
 # ---- Weapon ----
 @export_category("Weapon")
 @export var starting_weapon: PackedScene
-@export var alternate_weapon: PackedScene # Add this!
-var current_weapon: Weapon
+@export var alternate_weapon: PackedScene
+@export var current_weapon: Weapon
+@export var max_weapons: int = 2
 
 # ---- Node Paths ----
 @export_category("Node Paths")
 @export_node_path var weapon_pivot_path: NodePath
 @export_node_path var player_sprite_path: NodePath
 @export_node_path var health_component_path: NodePath
+@export_node_path var interact_box_path: NodePath
 
 # ===================== [ ONREADY NODE REFERENCES ] =====================
 @onready var weapon_pivot: Node2D = get_node(weapon_pivot_path)
 @onready var player_sprite: Sprite2D = get_node(player_sprite_path)
 @onready var health_component: HealthComponent = get_node(health_component_path)
-@onready var weapon_sprite: Sprite2D = $WeaponPivot/WeaponSprite
+@onready var interact_box: Area2D = get_node(interact_box_path)
 
 # ===================== [ INTERNAL STATE VARIABLES ] =====================
 var move_direction: Vector2 = Vector2.ZERO # Current movement input direction
 var is_rolling: bool = false
 var roll_timer: float = 0.0
 var can_shoot: bool = true
-var weapons: Array[PackedScene]
 var can_roll: bool = true # Cooldown tracker
-
+var targeted_weapon: Weapon = null
 
 # ===================== [ GODOT ENGINE FUNCTIONS ] =====================
 func _ready() -> void:
 	_verify_node_paths()
-	if health_component:
-		health_component.health_zero.connect(_on_health_zero) # Connect HealthComponent's death signal
-		health_component.health_changed.connect(_on_heal_changed) # Connect HealthComponent's change signal
-	weapons = [starting_weapon, alternate_weapon]
-	if starting_weapon:
-		_equip_weapon(starting_weapon)
-
+	_connect_signals()
 
 func _physics_process(delta: float) -> void:
 	if is_rolling:
@@ -55,10 +50,6 @@ func _physics_process(delta: float) -> void:
 	_handle_input()
 	_move_player(delta) #Move before checking for roll
 	_handle_aiming()
-	if Input.is_action_pressed("shoot"): # Now directly in _physics_process
-		_attempt_shoot()
-	if Input.is_action_just_pressed("swap_weapons"):
-		_on_swap_weapon_pressed()
 
 # ===================== [ INPUT HANDLING ] =====================
 func _handle_input() -> void:
@@ -66,6 +57,15 @@ func _handle_input() -> void:
 
 	if Input.is_action_just_pressed("roll") and not is_rolling and can_roll and move_direction != Vector2.ZERO:
 		_start_roll()
+	if Input.is_action_pressed("shoot"): # Now directly in _physics_process
+		_attempt_shoot()
+	if Input.is_action_just_pressed("cycle_weapon"):
+		_cycle_weapon()
+	if Input.is_action_just_pressed("interact"):
+		_attempt_pickup()
+	if Input.is_action_just_pressed("drop_weapon"):
+		drop_weapon()
+
 
 
 # ===================== [ MOVEMENT FUNCTIONS ] =====================
@@ -87,21 +87,82 @@ func _handle_aiming() -> void:
 
 
 # ===================== [ WEAPON FUNCTIONS ] =====================
-func _attempt_shoot() -> void: # New function to encapsulate the shooting attempt.
+func _attempt_shoot() -> void:
 	if current_weapon:
 		var mouse_position: Vector2 = get_global_mouse_position()
 		var shoot_direction: Vector2 = (mouse_position - current_weapon.global_position).normalized()
 		current_weapon.shoot(shoot_direction, get_parent())
 
-func _equip_weapon(new_weapon: PackedScene) -> void:
-	# current_weapon before the setting is the old weapon
+func _equip_weapon(new_weapon: Weapon) -> void:
+	if current_weapon == new_weapon: # do nothing if the same weapon
+		return
+
 	if new_weapon:
-		if current_weapon:
-			current_weapon.queue_free()
-		current_weapon = new_weapon.instantiate()
-		weapon_pivot.add_child(current_weapon)
+		new_weapon.set_is_equipped(true)
+		current_weapon = new_weapon
 	else:
-		printerr("new_weapon is invalid, got: ", new_weapon)
+		current_weapon = null
+
+func pickup_weapon(new_weapon: Weapon) -> void:
+	if weapon_pivot.get_child_count() >= max_weapons:
+		drop_weapon()
+	if current_weapon:
+		current_weapon.set_is_equipped(false) # Hide current weapon
+
+	new_weapon.get_parent().remove_child(new_weapon) # Remove from level
+	weapon_pivot.add_child(new_weapon) # Attach to player
+	new_weapon.position = Vector2(0,0)
+	new_weapon.rotation = 0
+
+	weapon_pivot.move_child(new_weapon, 0) # Move new_weapon to the top
+	new_weapon.set_is_held(true) # Weapon is now held by the player
+	_equip_weapon(weapon_pivot.get_child(0) if weapon_pivot.get_child_count() > 0 else null)
+
+func drop_weapon() -> void:
+	if current_weapon:
+		var weapon_to_drop = current_weapon
+		weapon_to_drop.get_parent().remove_child(weapon_to_drop) # remove from pivot
+		get_parent().add_child(weapon_to_drop) # add to same parent as the player
+		weapon_to_drop.global_position = global_position # at player's position
+		weapon_to_drop.rotation_degrees = weapon_pivot.rotation_degrees # at player's rotation
+
+		weapon_to_drop.set_is_held(false)
+		weapon_to_drop.set_is_equipped(false)
+		_equip_weapon(weapon_pivot.get_child(0) if weapon_pivot.get_child_count() > 0 else null) # Equip next weapon, or null if none
+
+func _attempt_pickup() -> void:
+	if targeted_weapon: # Check if a weapon is targeted
+		pickup_weapon(targeted_weapon)
+		targeted_weapon = null  # Clear the target after pickup
+		var prompt_label = get_node_or_null("PromptLabel")
+		if prompt_label:
+			prompt_label.hide()
+
+func _cycle_weapon() -> void:
+	if weapon_pivot.get_child_count() < 2:
+		return # Not enough weapons to cycle
+
+	current_weapon.set_is_equipped(false)
+	weapon_pivot.move_child(current_weapon, -1) # Move top weapon to the end
+	_equip_weapon(weapon_pivot.get_child(0)) #equip the new top weapon
+
+
+# --- InteractBox Callbacks ---
+func _on_interact_box_entered(body: Node2D) -> void:
+	var weapon = body.get_parent()
+	if weapon is Weapon and not weapon.is_equipped:
+		targeted_weapon = weapon
+		var prompt_label = get_node_or_null("PromptLabel")
+		if prompt_label:
+			prompt_label.show()
+
+func _on_interact_box_exited(body: Node2D) -> void:
+	var weapon = body.get_parent()
+	if weapon == targeted_weapon: # Only clear if it's the *current* target
+		targeted_weapon = null
+		var prompt_label = get_node_or_null("PromptLabel")
+		if prompt_label:
+			prompt_label.hide()
 
 
 # ===================== [ ROLL (DASH) FUNCTIONS ] =====================
@@ -109,9 +170,7 @@ func _start_roll() -> void:
 	is_rolling = true
 	can_roll = false # Start cooldown
 	roll_timer = roll_duration
-	velocity = move_direction * roll_speed # Use move_direction!
-	#if move_direction == Vector2.ZERO: #Remove this
-	#	velocity = Vector2.RIGHT * roll_speed
+	velocity = move_direction * roll_speed
 
 
 func _handle_roll(delta: float) -> void:
@@ -119,7 +178,6 @@ func _handle_roll(delta: float) -> void:
 	move_and_slide() #Keep this
 	if roll_timer <= 0:
 		is_rolling = false
-		#velocity = Vector2.ZERO # DONT zero out here
 		get_tree().create_timer(roll_cooldown).timeout.connect(_enable_roll)
 
 func _enable_roll() ->void:
@@ -136,7 +194,6 @@ func _on_heal_changed() -> void:
 func _on_health_zero() -> void:
 	_die() # Internal die function called when HealthComponent signals health_zero
 
-
 func _die() -> void:
 	print("Player died!")
 	queue_free() # Player-specific death action
@@ -150,9 +207,10 @@ func _verify_node_paths() -> void:
 		printerr("Sprite2D node not found at path:", player_sprite_path)
 	if not health_component:
 		printerr("HealthComponent node not found: Please add HealthComponent as a child node")
+	if not interact_box:
+		printerr("InteractBox node not found at path:", interact_box_path)
 
-func _on_swap_weapon_pressed():
-	if weapons.size() < 2 || weapons[0] == null || weapons[1] == null:
-		return
-	weapons.reverse()
-	_equip_weapon(weapons[0])
+func _connect_signals() -> void:
+	if health_component:
+		health_component.health_zero.connect(_on_health_zero) # Connect HealthComponent's death signal
+		health_component.health_changed.connect(_on_heal_changed) # Connect HealthComponent's change signal
