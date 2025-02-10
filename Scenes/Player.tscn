@@ -1,13 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://61lcgaipm83r"]
+[gd_scene load_steps=7 format=3 uid="uid://61lcgaipm83r"]
 
-[ext_resource type="Script" path="res://Scripts/Player.gd" id="1_w44a8"]
+[ext_resource type="Script" path="res://Scripts/player_control.gd" id="1_w44a8"]
 [ext_resource type="Texture2D" uid="uid://b17kia5dj4rya" path="res://Placeholder Sprites/Square/Square-0006.png" id="2_w72ec"]
+[ext_resource type="PackedScene" uid="uid://bwuhy0tag1d4k" path="res://Scenes/Weapons/pistol.tscn" id="2_yqq7c"]
+[ext_resource type="PackedScene" uid="uid://47x3di1i0rfp" path="res://Scenes/Weapons/shotgun.tscn" id="3_qbwkp"]
+[ext_resource type="PackedScene" uid="uid://7bv7nmfcbx3d" path="res://Scenes/Components/health_component.tscn" id="4_nchq8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nptje"]
 size = Vector2(42, 42)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_w44a8")
+roll_speed = 1000.0
+starting_weapon = ExtResource("2_yqq7c")
+alternate_weapon = ExtResource("3_qbwkp")
+weapon_pivot_path = NodePath("WeaponPivot")
+player_sprite_path = NodePath("PlayerSprite")
+health_component_path = NodePath("HealthComponent")
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 modulate = Color(0, 0.428437, 0.223188, 1)
@@ -19,14 +28,4 @@ shape = SubResource("RectangleShape2D_nptje")
 
 [node name="WeaponPivot" type="Node2D" parent="."]
 
-[node name="MuzzlePosition" type="Marker2D" parent="WeaponPivot"]
-
-[node name="WeaponSprite" type="Sprite2D" parent="WeaponPivot"]
-
-[node name="Camera2D" type="Camera2D" parent="."]
-
-[node name="HealthComponent" type="Node" parent="."]
-
-[node name="RollComponent" type="Node" parent="."]
-
-[node name="InputBufferComponent" type="Node" parent="."]
+[node name="HealthComponent" parent="." instance=ExtResource("4_nchq8")]

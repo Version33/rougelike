@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwuhy0tag1d4k"]
+
+[ext_resource type="PackedScene" uid="uid://2m7mcmch5m1" path="res://Scenes/Weapons/weapon_template.tscn" id="1_koje8"]
+[ext_resource type="Script" path="res://Scripts/Weapons/pistol.gd" id="2_5qo4w"]
+[ext_resource type="PackedScene" uid="uid://csg211s0lpbif" path="res://Scenes/Weapons/Bullets/base_bullet.tscn" id="3_7nfdg"]
+[ext_resource type="Texture2D" uid="uid://sncq4o2165oh" path="res://Placeholder Sprites/Triangle/Triangle-0001.png" id="4_t1ntk"]
+
+[node name="Pistol" instance=ExtResource("1_koje8")]
+rotation = 1.5708
+script = ExtResource("2_5qo4w")
+weapon_name = "Pistol"
+weapon_description = "A typical sidearm."
+fire_rate = 0.75
+bullet_scene = ExtResource("3_7nfdg")
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("4_t1ntk")
+
+[node name="MuzzlePosition" parent="." index="1"]
+position = Vector2(0, -16)

@@ -1,14 +1,18 @@
 [gd_scene load_steps=3 format=3 uid="uid://cggsi1hlou4rb"]
 
-[ext_resource type="Texture2D" uid="uid://doyypmnnxhqco" path="res://Placeholder Sprites/Circle/Circle-0002.png" id="1_j6qpr"]
+[ext_resource type="Texture2D" uid="uid://doyypmnnxhqco" path="res://Placeholder Sprites/Circle/Circle-0002.png" id="1_r3dr8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_icyf3"]
 radius = 16.0
 
 [node name="Bullet" type="Area2D"]
+collision_layer = 8
+collision_mask = 5
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_j6qpr")
+texture = ExtResource("1_r3dr8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_icyf3")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

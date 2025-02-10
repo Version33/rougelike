@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://csg211s0lpbif"]
+
+[ext_resource type="PackedScene" uid="uid://cggsi1hlou4rb" path="res://Scenes/Weapons/Bullets/bullet_template.tscn" id="1_bdwgp"]
+[ext_resource type="Script" path="res://Scripts/Weapons/Bullets/base_bullet.gd" id="2_hihtx"]
+
+[node name="BaseBullet" instance=ExtResource("1_bdwgp")]
+script = ExtResource("2_hihtx")
