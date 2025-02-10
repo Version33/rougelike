@@ -1,9 +1,9 @@
 class_name Bullet extends Area2D
 
 # Overridden by the gun that shoots it
-@export var speed: float = 600.0
-@export var lifetime: float = 2.0
-@export var damage: int = 10
+var speed: float = 1.0
+var lifetime: float = 1.0
+var damage: int = 1
 
 var direction: Vector2 = Vector2.RIGHT # Default direction
 var timer: float = 0.0

@@ -35,8 +35,8 @@ func _spawn_bullet(direction: Vector2, parent_node: Node2D) -> void:
 	var bullet_instance = bullet_scene.instantiate()
 	bullet_instance.global_position = muzzle_position.global_position # Apply muzzle offset
 	bullet_instance.set_direction(direction)
-	bullet_instance.speed = bullet_speed # Use the values that might be overridden by child classes.
-	bullet_instance.damage = bullet_damage # Use the values that might be overridden by child classes.
+	bullet_instance.speed = bullet_speed
+	bullet_instance.damage = bullet_damage
 	parent_node.add_child(bullet_instance) # Add bullet to the provided parent node
 
 func _start_cooldown() -> void:
