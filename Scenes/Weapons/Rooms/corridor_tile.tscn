@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbh0t5sub41w8"]
+
+[ext_resource type="TileSet" uid="uid://cwddrmnnarpyp" path="res://Resources/spritesheet.tres" id="1_wvnpi"]
+
+[node name="CorridorTile" type="Node2D"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 1, 0, 0, 0)
+tile_set = ExtResource("1_wvnpi")
