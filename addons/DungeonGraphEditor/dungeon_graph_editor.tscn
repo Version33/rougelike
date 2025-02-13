@@ -20,4 +20,5 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_vertical = 3
 grid_pattern = 1
+minimap_enabled = false
 show_zoom_label = true

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DungeonGraphData" load_steps=2 format=3 uid="uid://tclrckg1y8tc"]
+
+[ext_resource type="Script" path="res://addons/DungeonGraphEditor/dungeon_graph_data.gd" id="1_1rinr"]
+
+[resource]
+script = ExtResource("1_1rinr")
+graph_nodes = {}
+next_node_id = 1
+room_type_scenes = {
+"BOSS": [],
+"CORRIDOR": [],
+"ENTRANCE": [],
+"HUB": [],
+"NORMAL": [],
+"ONEWAY": [],
+"REWARD": []
+}

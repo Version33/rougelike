@@ -14,7 +14,6 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-resizable = true
 title = "Title"
 ignore_invalid_connection_type = true
 slot/0/left_enabled = true
