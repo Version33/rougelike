@@ -9,7 +9,7 @@ var direction: Vector2 = Vector2.RIGHT # Default direction
 var timer: float = 0.0
 
 func _ready() -> void:
-	pass # No need to set linear_velocity for Area2D
+	self.top_level = true # ignore rotation of parent node
 
 func _physics_process(delta: float) -> void:
 	timer += delta

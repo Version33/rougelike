@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://b27wi1nf7m1m6"]
+
+[ext_resource type="PackedScene" uid="uid://2m7mcmch5m1" path="res://Scenes/Weapons/weapon_template.tscn" id="1_vnakc"]
+[ext_resource type="Texture2D" uid="uid://bbuc11eyj1qnw" path="res://Placeholder Sprites/Triangle/Triangle-0005.png" id="2_5s4ei"]
+[ext_resource type="Script" path="res://Scripts/Weapons/smg.gd" id="2_s3erm"]
+[ext_resource type="PackedScene" uid="uid://csg211s0lpbif" path="res://Scenes/Weapons/Bullets/base_bullet.tscn" id="3_bdgre"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_epwwd"]
+size = Vector2(30, 31)
+
+[node name="SMG" instance=ExtResource("1_vnakc")]
+script = ExtResource("2_s3erm")
+weapon_name = "SMG"
+weapon_description = "Fast and hard to control."
+bullet_speed = 750.0
+bullet_damage = 1
+fire_rate = 0.05
+automatic = true
+bullet_scene = ExtResource("3_bdgre")
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("2_5s4ei")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" index="0"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_epwwd")
+
+[node name="MuzzlePosition" parent="." index="2"]
+position = Vector2(15, 0)

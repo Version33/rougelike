@@ -12,6 +12,7 @@ size = Vector2(30, 31)
 script = ExtResource("2_5qo4w")
 weapon_name = "Pistol"
 weapon_description = "A typical sidearm."
+bullet_speed = 600.0
 fire_rate = 0.75
 bullet_scene = ExtResource("3_7nfdg")
 

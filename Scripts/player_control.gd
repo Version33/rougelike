@@ -1,4 +1,8 @@
 extends CharacterBody2D
+
+# ===== [ DEBUG ] =====
+@onready var debug_label: Label = get_node("DebugLabel")
+
 # ===================== [ EXPORT PROPERTIES - TUNE IN INSPECTOR ] =====================
 # ---- Movement ----
 @export_category("Movement")
@@ -51,14 +55,16 @@ func _physics_process(delta: float) -> void:
 	_move_player(delta) #Move before checking for roll
 	_handle_aiming()
 
+	_update_debug_label()
+
 # ===================== [ INPUT HANDLING ] =====================
 func _handle_input() -> void:
 	move_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 
 	if Input.is_action_just_pressed("roll") and not is_rolling and can_roll and move_direction != Vector2.ZERO:
 		_start_roll()
-	if Input.is_action_pressed("shoot"): # Now directly in _physics_process
-		_attempt_shoot()
+	if current_weapon:
+		current_weapon.is_trigger_pulled = Input.is_action_pressed("shoot")
 	if Input.is_action_just_pressed("cycle_weapon"):
 		_cycle_weapon()
 	if Input.is_action_just_pressed("interact"):
@@ -77,22 +83,16 @@ func _move_player(delta: float) -> void:
 
 # ===================== [ AIMING FUNCTIONS ] =====================
 func _handle_aiming() -> void:
-	if not weapon_pivot or not player_sprite: # Safety checks for nodes
+	if not player_sprite or not current_weapon: # Safety checks for nodes
 		return
 
 	var mouse_pos: Vector2 = get_global_mouse_position()
-	weapon_pivot.look_at(mouse_pos)
+	current_weapon.look_at(mouse_pos)
 
-	player_sprite.flip_h = (weapon_pivot.rotation > deg_to_rad(90) or weapon_pivot.rotation < deg_to_rad(-90))
+	player_sprite.flip_h = (current_weapon.rotation > deg_to_rad(90) or current_weapon.rotation < deg_to_rad(-90))
 
 
 # ===================== [ WEAPON FUNCTIONS ] =====================
-func _attempt_shoot() -> void:
-	if current_weapon:
-		var mouse_position: Vector2 = get_global_mouse_position()
-		var shoot_direction: Vector2 = (mouse_position - current_weapon.global_position).normalized()
-		current_weapon.shoot(shoot_direction, get_parent())
-
 func _equip_weapon(new_weapon: Weapon) -> void:
 	if current_weapon == new_weapon: # do nothing if the same weapon
 		return
@@ -124,7 +124,7 @@ func drop_weapon() -> void:
 		weapon_to_drop.get_parent().remove_child(weapon_to_drop) # remove from pivot
 		get_parent().add_child(weapon_to_drop) # add to same parent as the player
 		weapon_to_drop.global_position = global_position # at player's position
-		weapon_to_drop.rotation_degrees = weapon_pivot.rotation_degrees # at player's rotation
+		#weapon_to_drop.rotation_degrees = weapon_pivot.rotation_degrees # at player's rotation
 
 		weapon_to_drop.set_is_held(false)
 		weapon_to_drop.set_is_equipped(false)
@@ -200,6 +200,13 @@ func _die() -> void:
 
 
 # ===================== [ UTILITY & SETUP FUNCTIONS ] =====================
+func _update_debug_label() -> void:
+	if current_weapon:
+		debug_label.text = "Cooldown: %10.3f\nCan Shoot: %s\nTrigger Pulled: %s\n Is Shooting: %s" % [current_weapon.cooldown, current_weapon.can_shoot, current_weapon.is_trigger_pulled, current_weapon.is_shooting]
+	else:
+		debug_label.text = "No Weapon"
+
+
 func _verify_node_paths() -> void:
 	if not weapon_pivot:
 		printerr("WeaponPivot node not found at path:", weapon_pivot_path)
