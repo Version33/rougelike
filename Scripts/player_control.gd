@@ -108,6 +108,7 @@ func pickup_weapon(new_weapon: Weapon) -> void:
 		drop_weapon()
 	if current_weapon:
 		current_weapon.set_is_equipped(false) # Hide current weapon
+		current_weapon.is_trigger_pulled = false
 
 	new_weapon.get_parent().remove_child(new_weapon) # Remove from level
 	weapon_pivot.add_child(new_weapon) # Attach to player
