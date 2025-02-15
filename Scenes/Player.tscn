@@ -14,13 +14,9 @@ size = Vector2(42, 42)
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_w44a8")
-move_speed = null
 roll_speed = 1000.0
-roll_duration = null
-roll_cooldown = null
 starting_weapon = ExtResource("2_yqq7c")
 alternate_weapon = ExtResource("3_qbwkp")
-max_weapons = null
 weapon_pivot_path = NodePath("WeaponPivot")
 player_sprite_path = NodePath("PlayerSprite")
 health_component_path = NodePath("HealthComponent")

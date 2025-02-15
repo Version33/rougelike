@@ -13,7 +13,6 @@ func _physics_process(delta: float) -> void:
 		current_spread_angle -= spread_decrease_rate * delta
 	
 	current_spread_angle = clampf(current_spread_angle,  0.0, max_spread_angle)
-	print(current_spread_angle)
 
 
 func _do_shoot() -> void:
