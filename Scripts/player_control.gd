@@ -121,6 +121,7 @@ func pickup_weapon(new_weapon: Weapon) -> void:
 func drop_weapon() -> void:
 	if current_weapon:
 		var weapon_to_drop = current_weapon
+		weapon_to_drop.is_trigger_pulled = false
 		weapon_to_drop.get_parent().remove_child(weapon_to_drop) # remove from pivot
 		get_parent().add_child(weapon_to_drop) # add to same parent as the player
 		weapon_to_drop.global_position = global_position # at player's position
@@ -143,6 +144,7 @@ func _cycle_weapon() -> void:
 		return # Not enough weapons to cycle
 
 	current_weapon.set_is_equipped(false)
+	current_weapon.is_trigger_pulled = false
 	weapon_pivot.move_child(current_weapon, -1) # Move top weapon to the end
 	_equip_weapon(weapon_pivot.get_child(0)) #equip the new top weapon
 

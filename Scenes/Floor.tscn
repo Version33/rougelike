@@ -1111,9 +1111,6 @@ Aim and Shoot - Mouse"
 [node name="Player" parent="." instance=ExtResource("3_2sx67")]
 position = Vector2(-402, 213)
 move_speed = 500.0
-roll_duration = 0.2
-roll_cooldown = 0.5
-max_weapons = 2
 interact_box_path = NodePath("")
 
 [node name="Shotgun" parent="." instance=ExtResource("5_ewqop")]
