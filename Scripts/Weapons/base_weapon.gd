@@ -44,6 +44,7 @@ func _physics_process(delta: float) -> void:
 			can_shoot = true
 
 	cooldown = clamp(cooldown - delta, 0, fire_rate)
+	is_trigger_pulled = false # unpull the trigger, the player can still pull it again next frame, prevents the gun from shooting without something *actively* pulling the trigger*
 
 func set_is_equipped(state: bool) -> void:
 	is_equipped = state
